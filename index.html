@@ -539,9 +539,10 @@ function renderGrammar(g,i){
       <span class="hint" style="display:inline">(${g.hint})</span></div>
       <div class="reveal" data-role="rev"></div></div>`;
   }
+  const nm="g_"+i+"_"+Math.random().toString(36).slice(2,8);
   return `<div class="gitem" data-i="${i}" data-type="mc">
     <div class="qline">${pt} ${g.text.replace("___","_____")}</div>
-    <div class="mc">${g.options.map(o=>`<label data-o="${o}"><input type="radio" name="g${i}_${Math.random().toString(36).slice(2,7)}" data-val="${o}"><span>${o}</span></label>`).join("")}</div>
+    <div class="mc">${g.options.map(o=>`<label data-o="${o}"><input type="radio" name="${nm}" data-val="${o}"><span>${o}</span></label>`).join("")}</div>
     <div class="reveal" data-role="rev"></div></div>`;
 }
 
@@ -605,14 +606,10 @@ document.addEventListener("click",e=>{
   const it=e.target.closest(".vitem");if(!it)return;
   if(it.classList.contains("matched"))return;
   const grid=it.closest('[data-role="vmatch"]');
-  if(!vSel){
-    if(it.dataset.side!=="en")return; // start with English
-    vSel=it;it.classList.add("sel");return;
-  }
+  if(!vSel){ vSel=it;it.classList.add("sel");return; }   // start from either column
   if(it===vSel){it.classList.remove("sel");vSel=null;return;}
-  if(it.dataset.side===vSel.dataset.side){ // switch selection on same side
-    if(it.dataset.side==="en"){vSel.classList.remove("sel");vSel=it;it.classList.add("sel");}
-    return;
+  if(it.dataset.side===vSel.dataset.side){ // tapped same side again -> switch selection
+    vSel.classList.remove("sel");vSel=it;it.classList.add("sel");return;
   }
   // we have one en + one tr
   const en=vSel.dataset.side==="en"?vSel:it;
@@ -661,6 +658,15 @@ function checkSentence(btn){
     if(all)markDone(card.dataset.day+":sentences");
   }
 }
+
+/* ---- Multiple-choice: highlight the selected option (works in all browsers) ---- */
+document.addEventListener("change",e=>{
+  const inp=e.target;
+  if(!(inp&&inp.matches&&inp.matches('.mc input[type="radio"]')))return;
+  const mc=inp.closest(".mc");
+  mc.querySelectorAll("label").forEach(l=>l.classList.remove("sel"));
+  const lab=inp.closest("label");if(lab)lab.classList.add("sel");
+});
 
 /* ====================== READING ====================== */
 function pickTF(btn,dayId,i,val){
@@ -764,16 +770,18 @@ function stopRec(){
   btn.textContent="🎤 Record again";task.querySelector('[data-role="dot"]').classList.remove("active");
   const ai=task.querySelector('[data-role="ai"]');ai.disabled=false;
   task.dataset.transcript=rec?rec._final():"";
+  const box=task.querySelector('[data-role="trans"]');
+  if(box&&!box.innerText.trim())box.innerHTML="";   // show placeholder again if nothing captured
   activeRec=null;
 }
 
 /* ---- Shadowing recorder (record once, then score) ---- */
 async function shadow(btn,dayId,i){
   const line=btn.closest(".shadowline"),target=DAYS.find(d=>d.id===dayId).story1.lines[i];
-  if(activeRec)stopRec();
-  let stream;try{stream=await getMic();}catch(e){line.querySelector('[data-role="sc"]').textContent="no mic";return;}
   const sc=line.querySelector('[data-role="sc"]');
-  if(!SRClass){sc.textContent="use Chrome";return;}
+  if(!SRClass){sc.textContent="Chrome only";sc.title="Pronunciation scoring needs Chrome/Edge or Android. The 🔊 Listen button still works here.";return;}
+  if(activeRec)stopRec();
+  let stream;try{stream=await getMic();}catch(e){sc.textContent="no mic";return;}
   btn.textContent="⏹ Stop";btn.classList.add("accent");
   const rec=makeRecognition(()=>{});
   const finish=()=>{
