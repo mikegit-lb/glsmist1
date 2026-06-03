@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>English Assignment · June 4–7 · LBEnglishCo</title>
+<style>
+  :root{
+    --bg:#f6f7fb; --card:#fff; --text:#1e2a3a; --muted:#6a7891; --border:#e3e8f0;
+    --primary:#2b7a78; --primary-dark:#205c5a; --accent:#f5a623;
+    --present:#3b82f6; --past:#f97316; --future:#8b5cf6; --comp:#10b981;
+    --ok:#16a34a; --bad:#dc2626;
+    --shadow:0 1px 3px rgba(20,30,50,.06),0 4px 12px rgba(20,30,50,.06);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    background:var(--bg);color:var(--text);line-height:1.55;-webkit-font-smoothing:antialiased}
+  header.topbar{background:linear-gradient(135deg,var(--primary) 0%,var(--primary-dark) 100%);
+    color:#fff;padding:18px 24px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;box-shadow:var(--shadow)}
+  header.topbar h1{font-size:20px;margin:0;font-weight:700;letter-spacing:.3px}
+  header.topbar .tag{font-size:12px;opacity:.92;padding:4px 10px;background:rgba(255,255,255,.18);border-radius:100px}
+  header.topbar .progress-wrap{margin-left:auto;display:flex;align-items:center;gap:10px;font-size:13px}
+  header.topbar .bar{width:150px;height:8px;background:rgba(255,255,255,.25);border-radius:100px;overflow:hidden}
+  header.topbar .bar>span{display:block;height:100%;background:var(--accent);transition:width .4s;width:0}
+  nav.tabs{display:flex;gap:4px;padding:10px 16px;background:#fff;border-bottom:1px solid var(--border);
+    overflow-x:auto;position:sticky;top:0;z-index:10}
+  nav.tabs button{background:transparent;border:0;padding:10px 16px;border-radius:8px;cursor:pointer;
+    font-size:14px;font-weight:600;color:var(--muted);white-space:nowrap;transition:all .15s}
+  nav.tabs button:hover{background:#eef2f9;color:var(--text)}
+  nav.tabs button.active{background:var(--primary);color:#fff}
+  nav.tabs button.done::after{content:" ✓";color:var(--ok);font-weight:bold}
+  nav.tabs button.active.done::after{color:#fff}
+  main{max-width:940px;margin:0 auto;padding:20px 20px 90px}
+  section.page{display:none;animation:fadeIn .25s ease}
+  section.page.active{display:block}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+  h2.page-title{font-size:28px;margin:6px 0 2px}
+  .subtitle{color:var(--muted);margin:0 0 16px}
+  .timebanner{display:inline-flex;align-items:center;gap:8px;background:#fff7e6;border:1px solid #ffe2ad;
+    color:#8a5a00;border-radius:100px;padding:6px 14px;font-size:13px;font-weight:600;margin-bottom:18px}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:18px;box-shadow:var(--shadow)}
+  .card h3{margin:0 0 4px;font-size:18px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .mins{font-size:11px;font-weight:700;color:var(--muted);background:#eef2f9;padding:3px 9px;border-radius:100px}
+  .hint{font-size:13px;color:var(--muted);margin:2px 0 14px}
+  .pt{font-size:11px;font-weight:700;color:#fff;padding:2px 8px;border-radius:100px;text-transform:uppercase;letter-spacing:.4px}
+  .pt.present{background:var(--present)} .pt.past{background:var(--past)} .pt.future{background:var(--future)} .pt.comp{background:var(--comp)}
+  button.btn{background:var(--primary);color:#fff;border:0;padding:9px 16px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;transition:all .15s}
+  button.btn:hover{background:var(--primary-dark);transform:translateY(-1px)}
+  button.btn.accent{background:var(--accent);color:#3a2a00}
+  button.btn.accent:hover{background:#d88f12}
+  button.btn.ghost{background:transparent;color:var(--primary);border:1px solid var(--primary)}
+  button.btn.ghost:hover{background:var(--primary);color:#fff}
+  button.btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+  input.blank{border:0;border-bottom:2px dashed #b8c3d6;padding:4px 6px;min-width:120px;font-size:15px;font-family:inherit;background:transparent;color:var(--text)}
+  input.blank:focus{outline:none;border-bottom-color:var(--primary)}
+  input.blank.correct{border-bottom:2px solid var(--ok);color:var(--ok);background:#f0fdf4}
+  input.blank.wrong{border-bottom:2px solid var(--bad);color:var(--bad);background:#fef2f2}
+  .gitem{margin:14px 0;padding-bottom:12px;border-bottom:1px dashed var(--border)}
+  .gitem:last-child{border-bottom:0}
+  .gitem .qline{font-size:15px}
+  .mc{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+  .mc label{border:1px solid var(--border);border-radius:8px;padding:7px 14px;cursor:pointer;font-size:14px;background:#fff;transition:all .12s}
+  .mc label:hover{border-color:var(--primary)}
+  .mc input{display:none}
+  .mc input:checked+span{font-weight:700}
+  .mc label.sel{border-color:var(--primary);background:#eef7f6}
+  .mc label.correct{border-color:var(--ok);background:#f0fdf4;color:#065f46}
+  .mc label.wrong{border-color:var(--bad);background:#fef2f2;color:#991b1b}
+  .reveal{font-size:13px;color:var(--ok);margin-top:6px;font-weight:600;display:none}
+  .feedback{padding:10px 14px;border-radius:8px;font-size:14px;font-weight:600;margin-top:14px;display:none}
+  .feedback.ok{background:#ecfdf5;color:#065f46;display:block}
+  .feedback.bad{background:#fef2f2;color:#991b1b;display:block}
+  /* vocab matching */
+  .vmatch{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:8px}
+  .vcol{display:flex;flex-direction:column;gap:8px}
+  .vcol .lab{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
+  .vitem{border:2px solid var(--border);border-radius:10px;padding:11px 12px;cursor:pointer;font-weight:600;font-size:15px;background:#fff;text-align:center;transition:all .12s}
+  .vitem:hover{border-color:var(--primary)}
+  .vitem.sel{border-color:var(--accent);background:#fff7e6}
+  .vitem.matched{border-color:var(--ok);background:#f0fdf4;color:#065f46;cursor:default;opacity:.75}
+  .vitem.wrong{border-color:var(--bad);background:#fef2f2}
+  /* sentence building */
+  .sb{margin:14px 0;padding:12px;border:1px dashed var(--border);border-radius:10px}
+  .sb .answer{min-height:44px;border-bottom:2px solid var(--border);display:flex;flex-wrap:wrap;gap:6px;padding:6px 2px;margin-bottom:10px}
+  .sb .bank{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+  .tile{background:#eef2f9;border:1px solid var(--border);border-radius:7px;padding:6px 12px;cursor:pointer;font-size:14px;font-weight:600;user-select:none;transition:all .12s}
+  .tile:hover{background:#e2e8f5;border-color:var(--primary)}
+  .answer .tile{background:#eef7f6;border-color:#bfe0dd}
+  /* speaking + recorder */
+  .speaktask{margin:14px 0;padding:14px;border:1px solid var(--border);border-radius:10px;background:#fafbff}
+  .prompt{font-size:15px;font-weight:600;margin-bottom:8px}
+  .targets{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+  .targets .tw{font-size:12px;background:#ede9fe;color:#5b21b6;padding:4px 10px;border-radius:100px;font-weight:600}
+  .recrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .recdot{width:10px;height:10px;border-radius:50%;background:#cbd5e1}
+  .recdot.active{background:var(--bad);animation:pulse 1s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+  audio{height:34px;vertical-align:middle;max-width:100%}
+  .transcript{margin-top:10px;padding:10px 12px;background:#fff;border:1px solid var(--border);border-radius:8px;font-size:14px;min-height:44px;color:#374151}
+  .transcript .interim{color:#9ca3af}
+  .transcript[contenteditable]:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 2px rgba(43,122,120,.12)}
+  .transcript:empty:before{content:attr(data-ph);color:#9ca3af;font-style:italic}
+  .trans-hint{margin:6px 0 0}
+  .ai-out{margin-top:10px;padding:12px 14px;border-radius:10px;background:#fff;border:1px solid var(--border);display:none}
+  .ai-out.show{display:block}
+  .ai-out .score{font-size:22px;font-weight:800;color:var(--primary)}
+  .ai-out ul{margin:8px 0 0;padding-left:4px;list-style:none}
+  .ai-out li{margin:6px 0;font-size:14px;display:flex;gap:8px;align-items:flex-start}
+  .ai-out li .ic{flex:0 0 auto}
+  .ai-out li.ok .ic{color:var(--ok)} .ai-out li.warn .ic{color:#d97706}
+  /* stories */
+  .shadowline{display:flex;align-items:flex-start;gap:8px;padding:9px 0;border-bottom:1px dashed var(--border);flex-wrap:wrap}
+  .shadowline:last-child{border-bottom:0}
+  .shadowline .txt{flex:1;min-width:200px;font-size:15px}
+  .shadowline .sc{font-size:12px;font-weight:700;padding:2px 9px;border-radius:100px;background:#eef2f9;color:var(--muted)}
+  .shadowline .sc.good{background:#f0fdf4;color:#065f46}
+  .shadowline .sc.mid{background:#fff7e6;color:#8a5a00}
+  .storytext{font-size:15.5px;line-height:1.7;background:#fff;border:1px solid var(--border);border-radius:10px;padding:16px;margin:8px 0 14px}
+  .tf{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:9px 0;font-size:15px}
+  .tf .q{flex:1;min-width:200px}
+  .tf .opts{display:flex;gap:6px}
+  .tf .opts button{border:1px solid var(--border);background:#fff;border-radius:7px;padding:5px 14px;cursor:pointer;font-weight:600;font-size:13px}
+  .tf .opts button.sel{border-color:var(--primary);background:#eef7f6}
+  .tf .opts button.correct{border-color:var(--ok);background:#f0fdf4;color:#065f46}
+  .tf .opts button.wrong{border-color:var(--bad);background:#fef2f2;color:#991b1b}
+  .saq{margin:12px 0}
+  .saq label{display:block;font-size:15px;font-weight:600;margin-bottom:6px}
+  .saq input{width:100%;border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:14px;font-family:inherit}
+  .saq .model{font-size:13px;color:var(--ok);margin-top:5px;font-weight:600;display:none}
+  details.ai-settings{max-width:940px;margin:0 auto 4px;background:#fff;border:1px solid var(--border);border-radius:12px;padding:0 18px;box-shadow:var(--shadow)}
+  details.ai-settings summary{cursor:pointer;padding:14px 0;font-weight:700;font-size:14px;color:var(--text)}
+  details.ai-settings .body{padding:0 0 16px}
+  details.ai-settings select,details.ai-settings input{padding:8px 10px;border:1px solid var(--border);border-radius:8px;font-size:14px;font-family:inherit}
+  details.ai-settings input{min-width:260px}
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:8px 0}
+  .warn-browser{background:#fef2f2;color:#991b1b;border:1px solid #fecaca;border-radius:8px;padding:10px 14px;font-size:13px;font-weight:600;margin-bottom:14px;display:none}
+  footer{text-align:center;color:var(--muted);font-size:13px;padding:24px 16px 40px}
+  .scorepill{font-size:13px;font-weight:700;color:var(--primary);margin-left:8px}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <h1>📚 English Assignment</h1>
+  <span class="tag">A1 / A2</span>
+  <span class="tag">June 4–7</span>
+  <div class="progress-wrap"><span>Progress</span><div class="bar"><span id="progbar"></span></div><span id="progtext">0%</span></div>
+</header>
+
+<nav class="tabs" id="tabs"></nav>
+
+<main>
+  <details class="ai-settings">
+    <summary>⚙️ AI speaking feedback — settings (optional)</summary>
+    <div class="body">
+      <p class="hint" style="margin-top:0">The speaking tasks give you <strong>instant feedback for free</strong> (no setup needed). If your teacher wants <strong>real AI</strong> feedback, paste an API key below. The key stays only in this browser and is never sent anywhere except the AI provider.</p>
+      <div class="row">
+        <label>Feedback engine:&nbsp;
+          <select id="aiProvider">
+            <option value="heuristic">Built-in (free, no key)</option>
+            <option value="anthropic">Claude (Anthropic key)</option>
+            <option value="openai">OpenAI key</option>
+          </select>
+        </label>
+        <input id="aiKey" type="password" placeholder="Paste API key (only for Claude/OpenAI)" autocomplete="off">
+        <button class="btn" id="aiSave">Save</button>
+        <span id="aiSaved" class="hint" style="display:none;color:var(--ok);font-weight:700">Saved ✓</span>
+      </div>
+    </div>
+  </details>
+  <div id="pages"></div>
+</main>
+
+<footer>LBEnglishCo · Denizli · Best in Google Chrome or Microsoft Edge for voice recording 🎤</footer>
+
+<script>
+/* ====================== CONTENT DATA ====================== */
+const DAYS = [
+{
+  id:"jun4", label:"June 4th", theme:"Daily Routines",
+  grammar:[
+    {point:"present",type:"fill",text:"Every day she ___ coffee.",hint:"drink",answers:["drinks"]},
+    {point:"present",type:"mc",text:"I ___ breakfast every morning.",options:["eat","eats","eating"],answer:"eat"},
+    {point:"past",type:"fill",text:"Yesterday I ___ eggs for breakfast.",hint:"eat",answers:["ate"]},
+    {point:"past",type:"mc",text:"He ___ very tired last night.",options:["is","was","were"],answer:"was"},
+    {point:"future",type:"fill",text:"Tomorrow I ___ up early.",hint:"will + wake",answers:["will wake","will wake up"]},
+    {point:"future",type:"mc",text:"We ___ have lunch at noon tomorrow.",options:["will","wills","willing"],answer:"will"},
+    {point:"comp",type:"fill",text:"Today is ___ than yesterday.",hint:"good",answers:["better"]},
+    {point:"comp",type:"mc",text:"I am ___ than my sister.",options:["tall","taller","tallest"],answer:"taller"}
+  ],
+  vocab:[
+    {en:"wake up",tr:"uyanmak"},{en:"breakfast",tr:"kahvaltı"},{en:"brush",tr:"fırçalamak"},
+    {en:"tired",tr:"yorgun"},{en:"early",tr:"erken"},{en:"always",tr:"her zaman"},
+    {en:"coffee",tr:"kahve"},{en:"lunch",tr:"öğle yemeği"}
+  ],
+  sentences:[
+    ["I","always","drink","coffee","in","the","morning"],
+    ["She","brushes","her","teeth","every","day"],
+    ["He","was","very","tired","last","night"]
+  ],
+  speaking:[
+    {prompt:"Tell me about your morning routine. What do you do every day?",targets:["breakfast","early","coffee","market"],focus:"present"},
+    {prompt:"What did you do yesterday morning? Tell a short story.",targets:["woke","ate","bus","tired"],focus:"past"}
+  ],
+  story1:{title:"My Busy Morning",lines:[
+    "Every morning I wake up early at six o'clock.",
+    "First, I open the window and look at the blue sky.",
+    "Then I brush my teeth and wash my face with cold water.",
+    "I am always very hungry, so I eat a big breakfast.",
+    "I drink hot tea with fresh bread, cheese, and olives.",
+    "My little sister wakes up much later than me.",
+    "She is very slow in the morning, but I am fast.",
+    "At seven thirty, I put on my shoes and my coat.",
+    "I walk to the bus stop near my old house.",
+    "Today the bus is early, so I am very happy.",
+    "I go to work and start my busy day with a smile.",
+    "Mornings are tiring, but I really like them very much.",
+    "After work I am tired, but my morning gives me energy.",
+    "Tomorrow I will wake up early again and do the same things."
+  ]},
+  story2:{title:"Ayşe's Day",
+    text:"Ayşe is a young teacher in Izmir. She lives in a small flat near the sea. Every day, Ayşe wakes up at half past six. She does not eat a big breakfast, because she is never hungry in the morning. She only drinks a cup of coffee. After that, she takes the bus to her school. The bus is often full, so Ayşe stands for twenty minutes. At school, she teaches young children. She likes her job very much, because the children are kind and funny. Yesterday was a special day. Ayşe's class had a small party. The children brought cakes and fruit. They sang songs and played games. Ayşe was very happy. After the party, she walked home with her friend. In the evening, Ayşe was tired, but she felt good. Tomorrow she will start a new lesson.",
+    tf:[
+      {q:"Ayşe lives far from the sea.",a:false},
+      {q:"Ayşe eats a big breakfast every day.",a:false},
+      {q:"Ayşe takes the bus to school.",a:true},
+      {q:"The children at school are kind and funny.",a:true},
+      {q:"Yesterday Ayşe's class had a party.",a:true}
+    ],
+    short:[
+      {q:"What does Ayşe drink in the morning?",model:"She drinks a cup of coffee.",keywords:["coffee"]},
+      {q:"Why does Ayşe like her job?",model:"Because the children are kind and funny.",keywords:["kind","funny","children"]}
+    ]
+  }
+},
+{
+  id:"jun5", label:"June 5th", theme:"Food & Shopping",
+  grammar:[
+    {point:"present",type:"fill",text:"She ___ bread every day.",hint:"buy",answers:["buys"]},
+    {point:"present",type:"mc",text:"They ___ apples at the market.",options:["buy","buys","buying"],answer:"buy"},
+    {point:"past",type:"fill",text:"Yesterday we ___ cheap fruit.",hint:"buy",answers:["bought"]},
+    {point:"past",type:"mc",text:"The bread ___ delicious yesterday.",options:["is","was","are"],answer:"was"},
+    {point:"future",type:"fill",text:"Tomorrow I ___ to the market.",hint:"will + go",answers:["will go"]},
+    {point:"future",type:"mc",text:"She ___ buy some bread later.",options:["will","wills","willing"],answer:"will"},
+    {point:"comp",type:"fill",text:"Apples are ___ than meat.",hint:"cheap",answers:["cheaper"]},
+    {point:"comp",type:"mc",text:"This shop is ___ than that one.",options:["expensive","expensiver","more expensive"],answer:"more expensive"}
+  ],
+  vocab:[
+    {en:"market",tr:"pazar / market"},{en:"cheap",tr:"ucuz"},{en:"expensive",tr:"pahalı"},
+    {en:"buy",tr:"satın almak"},{en:"apple",tr:"elma"},{en:"bread",tr:"ekmek"},
+    {en:"money",tr:"para"},{en:"delicious",tr:"lezzetli"}
+  ],
+  sentences:[
+    ["I","bought","cheap","apples","at","the","market"],
+    ["Bread","is","cheaper","than","meat"],
+    ["She","buys","fresh","bread","every","day"]
+  ],
+  speaking:[
+    {prompt:"Tell me about your last shopping trip. What did you buy?",targets:["bought","market","money","tired"],focus:"past"},
+    {prompt:"What will you buy tomorrow? Where will you go?",targets:["will","buy","cheaper","delicious"],focus:"future"}
+  ],
+  story1:{title:"At the Market",lines:[
+    "On Saturday morning, I go to the big market.",
+    "The market is near my house, so I walk there.",
+    "There are many colourful fruits and fresh vegetables.",
+    "Red apples and yellow lemons are very cheap today.",
+    "I buy two kilos of apples and one big bread.",
+    "The bread smells delicious and is still warm.",
+    "An old man sells fish next to the apples.",
+    "His fish is more expensive than the meat.",
+    "I do not have much money, so I buy only fruit.",
+    "My bag is heavy, but I am happy.",
+    "At home, I wash the apples and eat one.",
+    "It is sweet and delicious, the best apple this week.",
+    "Next Saturday, I will go to the market again.",
+    "I will buy cheaper fruit and some fresh fish too.",
+    "Shopping at the market is cheaper than the big shop.",
+    "I love my small, busy, and friendly market."
+  ]},
+  story2:{title:"A Shopping Day",
+    text:"Last Sunday, Mehmet and his mother went to the city centre. They wanted to buy new clothes and some food. First, they went to a big shop. The shop was very expensive, so they did not buy anything there. Then they walked to the old market. At the market, the prices were much cheaper. Mehmet's mother bought apples, bread, and fresh fish. Mehmet bought a blue shirt and a small bag. The bag was cheap but very nice. They were hungry, so they ate lunch at a small café. Mehmet had a big sandwich, and his mother had soup. The food was delicious and not expensive. After lunch, they carried their heavy bags to the bus stop. The bus was late, so they waited for ten minutes. At home, they put the food in the kitchen. Mehmet was tired but happy. He said, 'Tomorrow I will wear my new shirt to school.'",
+    tf:[
+      {q:"Mehmet and his mother went to the city centre on Sunday.",a:true},
+      {q:"The big shop was cheap.",a:false},
+      {q:"The market was more expensive than the big shop.",a:false},
+      {q:"Mehmet bought a blue shirt.",a:true},
+      {q:"They ate lunch at a café.",a:true}
+    ],
+    short:[
+      {q:"What did Mehmet's mother buy at the market?",model:"She bought apples, bread, and fresh fish.",keywords:["apples","bread","fish"]},
+      {q:"Why did they not buy anything at the big shop?",model:"Because it was very expensive.",keywords:["expensive"]}
+    ]
+  }
+},
+{
+  id:"jun6", label:"June 6th", theme:"Travel & Future Plans",
+  grammar:[
+    {point:"present",type:"fill",text:"He ___ by bus every summer.",hint:"travel",answers:["travels"]},
+    {point:"present",type:"mc",text:"We ___ to the city on Mondays.",options:["go","goes","going"],answer:"go"},
+    {point:"past",type:"fill",text:"Last year I ___ a big city.",hint:"visit",answers:["visited"]},
+    {point:"past",type:"mc",text:"They ___ at a small hotel.",options:["stay","stayed","staying"],answer:"stayed"},
+    {point:"future",type:"fill",text:"Next week we ___ to the beach.",hint:"will + go",answers:["will go"]},
+    {point:"future",type:"mc",text:"I ___ buy a ticket tomorrow.",options:["will","am will","wills"],answer:"will"},
+    {point:"comp",type:"fill",text:"The beach is ___ than the city.",hint:"far",answers:["farther","further"]},
+    {point:"comp",type:"mc",text:"This hotel is ___ than that one.",options:["good","gooder","better"],answer:"better"}
+  ],
+  vocab:[
+    {en:"travel",tr:"seyahat etmek"},{en:"bus",tr:"otobüs"},{en:"ticket",tr:"bilet"},
+    {en:"city",tr:"şehir"},{en:"beach",tr:"plaj / kumsal"},{en:"hotel",tr:"otel"},
+    {en:"map",tr:"harita"},{en:"far",tr:"uzak"}
+  ],
+  sentences:[
+    ["We","will","travel","to","the","beach","next","week"],
+    ["I","bought","a","bus","ticket","yesterday"],
+    ["The","city","is","far","from","the","beach"]
+  ],
+  speaking:[
+    {prompt:"Tell me about a trip or holiday you took. Where did you go?",targets:["travelled","bus","ticket","expensive"],focus:"past"},
+    {prompt:"Where will you travel next? What will you do there?",targets:["will","beach","hotel","cheaper"],focus:"future"}
+  ],
+  story1:{title:"A Trip to the Beach",lines:[
+    "Last summer, my family travelled to a small beach town.",
+    "We took an early bus from our city on Friday.",
+    "The trip was long, but the bus was comfortable.",
+    "I looked out of the window at the green hills.",
+    "Our hotel was small but clean and very cheap.",
+    "The beach was only five minutes from the hotel.",
+    "The sea was warm, and the sand was soft.",
+    "Every morning, we swam and played in the water.",
+    "My brother built a big castle with wet sand.",
+    "In the afternoon, we ate fresh fish near the sea.",
+    "The fish was delicious and not expensive at all.",
+    "One day, we bought tickets for a boat trip.",
+    "The boat took us to a quiet, beautiful island.",
+    "I was sad to leave, but I was also happy.",
+    "Next year, we will travel to the same beach again.",
+    "That beach is the best place in the world for me."
+  ]},
+  story2:{title:"Our City Holiday",
+    text:"Last April, Deniz and her friend Can visited a big city for three days. They wanted to see old buildings and eat new food. They travelled by train, because the train was cheaper than the plane. Their hotel was in the city centre, near a busy street. On the first day, they walked a lot and looked at a famous tower. The tower was very tall, and the view was beautiful. On the second day, they took a bus to a big museum. The museum was far from the hotel, so the bus trip was long. They saw old pictures and learned many things. In the evening, they ate at a small restaurant. The food was delicious, but a little expensive. On the last day, they bought small gifts for their families. Deniz bought a map and a book. Can bought a hat. They were tired but very happy. They said, 'Next year, we will visit another city together.'",
+    tf:[
+      {q:"Deniz and Can visited the city for three days.",a:true},
+      {q:"They travelled by plane.",a:false},
+      {q:"The tower was very tall.",a:true},
+      {q:"The museum was near the hotel.",a:false},
+      {q:"They bought gifts on the last day.",a:true}
+    ],
+    short:[
+      {q:"Why did they travel by train?",model:"Because the train was cheaper than the plane.",keywords:["cheaper","train"]},
+      {q:"What did Deniz buy?",model:"She bought a map and a book.",keywords:["map","book"]}
+    ]
+  }
+},
+{
+  id:"jun7", label:"June 7th", theme:"People, Places & Comparing",
+  grammar:[
+    {point:"present",type:"fill",text:"My friend ___ in a big city.",hint:"live",answers:["lives"]},
+    {point:"present",type:"mc",text:"They ___ very kind.",options:["is","are","am"],answer:"are"},
+    {point:"past",type:"fill",text:"Last year my brother ___ short.",hint:"be",answers:["was"]},
+    {point:"past",type:"mc",text:"We ___ happy at the party.",options:["was","were","are"],answer:"were"},
+    {point:"future",type:"fill",text:"Tomorrow I ___ my family.",hint:"will + meet",answers:["will meet"]},
+    {point:"future",type:"mc",text:"She ___ be happy to see you.",options:["will","wills","willing"],answer:"will"},
+    {point:"comp",type:"fill",text:"My sister is ___ than me.",hint:"tall",answers:["taller"]},
+    {point:"comp",type:"mc",text:"He is ___ than his brother.",options:["happy","happier","more happy"],answer:"happier"}
+  ],
+  vocab:[
+    {en:"friend",tr:"arkadaş"},{en:"family",tr:"aile"},{en:"tall",tr:"uzun boylu"},
+    {en:"short",tr:"kısa"},{en:"happy",tr:"mutlu"},{en:"kind",tr:"nazik / kibar"},
+    {en:"old",tr:"yaşlı / eski"},{en:"young",tr:"genç"}
+  ],
+  sentences:[
+    ["My","brother","is","taller","than","me"],
+    ["She","is","a","kind","and","happy","friend"],
+    ["They","will","visit","their","family","tomorrow"]
+  ],
+  speaking:[
+    {prompt:"Describe two people in your family. How are they different?",targets:["taller","kind","older","friend"],focus:"comp"},
+    {prompt:"Compare two cities or places you know. Which is better?",targets:["bigger","cheaper","beach","hotel"],focus:"comp"}
+  ],
+  story1:{title:"My Best Friend",lines:[
+    "My best friend's name is Elif, and she is seventeen.",
+    "We have been good friends for many years.",
+    "Elif is taller than me, but I am older.",
+    "She has long brown hair and a kind smile.",
+    "Elif is funnier than all my other friends.",
+    "She lives with her big family near my house.",
+    "Her mother is a teacher, and her father is a doctor.",
+    "Every weekend, we walk in the park together.",
+    "Last month, we travelled to the beach by bus.",
+    "Elif is braver than me, so she swam very far.",
+    "I am quieter, but Elif is louder and happier.",
+    "We are very different, but we are best friends.",
+    "Tomorrow is her birthday, and I will buy a gift.",
+    "I think Elif is the kindest person I know.",
+    "Next year, we will start a new school together.",
+    "I am lucky, because Elif is a wonderful friend."
+  ]},
+  story2:{title:"Two Brothers",
+    text:"Ali and Omar are brothers, but they are very different. Ali is older, taller, and quieter than Omar. He is twenty years old. Omar is younger and shorter, but he is louder and funnier. Ali likes books and quiet evenings at home. He works in an office in the city. Omar likes sport and loud music. He is still a student at school. Last weekend, the two brothers visited their grandmother. She lives in a small village, far from the city. They travelled by bus for two hours. Their grandmother was very happy to see them. She made a big lunch with fresh bread and soup. The food was delicious. After lunch, Ali read a book in the garden. Omar played football with the village children. In the evening, the brothers were tired but happy. Their grandmother said, 'You are different, but you are both kind boys.' Next month, they will visit her again.",
+    tf:[
+      {q:"Ali is older than Omar.",a:true},
+      {q:"Omar is taller than Ali.",a:false},
+      {q:"Their grandmother lives in the city.",a:false},
+      {q:"They travelled by bus.",a:true},
+      {q:"Omar played football with the village children.",a:true}
+    ],
+    short:[
+      {q:"How are Ali and Omar different? (write one difference)",model:"Ali is older, taller and quieter; Omar is younger, shorter and louder.",keywords:["older","taller","quieter","younger","shorter","louder"]},
+      {q:"What did their grandmother make for lunch?",model:"She made fresh bread and soup.",keywords:["bread","soup"]}
+    ]
+  }
+}
+];
+
+const POINT_LABEL={present:"Present Simple",past:"Past Simple",future:"Will (Future)",comp:"Comparatives"};
+
+/* ====================== HELPERS ====================== */
+const $=(s,r=document)=>r.querySelector(s);
+const norm=s=>(s||"").toLowerCase().replace(/[.,!?;:"']/g,"").replace(/\s+/g," ").trim();
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+
+const completed=new Set();
+function markDone(key){if(!completed.has(key)){completed.add(key);updateProgress();}}
+function updateProgress(){
+  const total=DAYS.length*4;
+  const pct=Math.round(completed.size/total*100);
+  $("#progbar").style.width=pct+"%";$("#progtext").textContent=pct+"%";
+  DAYS.forEach((d,i)=>{
+    const need=["grammar","vocab","sentences","reading"].map(s=>d.id+":"+s);
+    const done=need.every(k=>completed.has(k));
+    document.querySelectorAll("nav.tabs button")[i].classList.toggle("done",done);
+  });
+}
+
+/* ====================== BUILD UI ====================== */
+const tabsEl=$("#tabs"),pagesEl=$("#pages");
+DAYS.forEach((day,di)=>{
+  const btn=document.createElement("button");
+  btn.textContent=day.label;
+  btn.onclick=()=>{
+    document.querySelectorAll("nav.tabs button").forEach(b=>b.classList.remove("active"));
+    document.querySelectorAll("section.page").forEach(p=>p.classList.remove("active"));
+    btn.classList.add("active");document.querySelectorAll("section.page")[di].classList.add("active");
+    window.scrollTo({top:0,behavior:"smooth"});
+  };
+  tabsEl.appendChild(btn);
+
+  const sec=document.createElement("section");
+  sec.className="page"+(di===0?" active":"");
+  sec.innerHTML=renderDay(day);
+  pagesEl.appendChild(sec);
+  if(di===0)btn.classList.add("active");
+});
+
+function renderDay(day){
+  return `
+  <h2 class="page-title">${day.label} — ${day.theme}</h2>
+  <p class="subtitle">Grammar · Vocabulary · Sentences · Speaking · Reading</p>
+  <div class="timebanner">⏱ About 55–60 minutes. Take a short break if you need one.</div>
+
+  <div class="card" data-sec="grammar" data-day="${day.id}">
+    <h3>📝 Grammar — all four points <span class="mins">~10 min</span></h3>
+    <p class="hint">Practise Present Simple, Past Simple, Will, and Comparatives. Fill the gap or choose the best word, then press <strong>Check answers</strong>.</p>
+    ${day.grammar.map((g,i)=>renderGrammar(g,i)).join("")}
+    <button class="btn" onclick="gradeGrammar(this,'${day.id}')">Check answers</button>
+    <span class="scorepill" data-role="gscore"></span>
+    <div class="feedback" data-role="gfb"></div>
+  </div>
+
+  <div class="card" data-sec="vocab" data-day="${day.id}">
+    <h3>🔤 Vocabulary — match English &amp; Turkish <span class="mins">~6 min</span></h3>
+    <p class="hint">Click an English word, then click its Turkish meaning. Correct pairs turn green.</p>
+    <div class="vmatch" data-role="vmatch">
+      <div class="vcol"><span class="lab">English</span>${day.vocab.map((v,i)=>`<div class="vitem" data-side="en" data-i="${i}">${v.en}</div>`).join("")}</div>
+      <div class="vcol"><span class="lab">Türkçe</span>${shuffle(day.vocab.map((v,i)=>({i,tr:v.tr}))).map(o=>`<div class="vitem" data-side="tr" data-i="${o.i}">${o.tr}</div>`).join("")}</div>
+    </div>
+    <div class="feedback" data-role="vfb"></div>
+  </div>
+
+  <div class="card" data-sec="sentences" data-day="${day.id}">
+    <h3>🧩 Build the sentence <span class="mins">~6 min</span></h3>
+    <p class="hint">Click the words in the correct order. Click a word in your sentence to send it back.</p>
+    ${day.sentences.map((s,i)=>renderSentence(s,i)).join("")}
+    <span class="scorepill" data-role="sscore"></span>
+  </div>
+
+  <div class="card" data-sec="speaking" data-day="${day.id}">
+    <h3>🎤 Speaking + AI feedback <span class="mins">~12 min</span></h3>
+    <div class="warn-browser" data-role="warn">⚠️ Voice recording needs Google Chrome or Microsoft Edge, and microphone permission.</div>
+    <p class="hint">Speak for 30–60 seconds. <strong>Use the purple words</strong> — they come from the other days! Then press <strong>Get AI feedback</strong>.</p>
+    ${day.speaking.map((t,i)=>renderSpeak(t,i)).join("")}
+  </div>
+
+  <div class="card" data-sec="story1" data-day="${day.id}">
+    <h3>🗣️ Story 1 — Shadowing &amp; pronunciation <span class="mins">~12 min</span></h3>
+    <p class="hint"><strong>Listen</strong> to each line, then <strong>Shadow</strong> it (say the same words). Try to copy the sounds. You get a match score.</p>
+    <p style="font-weight:700;margin:4px 0 8px">${day.story1.title}</p>
+    ${day.story1.lines.map((l,i)=>`
+      <div class="shadowline" data-i="${i}">
+        <span class="txt">${l}</span>
+        <button class="btn ghost" onclick="speak(this,'${day.id}',${i})">🔊 Listen</button>
+        <button class="btn" onclick="shadow(this,'${day.id}',${i})">🎤 Shadow</button>
+        <span class="sc" data-role="sc">—</span>
+      </div>`).join("")}
+  </div>
+
+  <div class="card" data-sec="reading" data-day="${day.id}">
+    <h3>📖 Story 2 — Read &amp; answer <span class="mins">~12 min</span></h3>
+    <p style="font-weight:700;margin:4px 0 4px">${day.story2.title}</p>
+    <div class="storytext">${day.story2.text}</div>
+    <p style="font-weight:700;margin:10px 0 4px">A) True or False?</p>
+    ${day.story2.tf.map((t,i)=>`
+      <div class="tf" data-i="${i}">
+        <span class="q">${i+1}. ${t.q}</span>
+        <span class="opts">
+          <button onclick="pickTF(this,'${day.id}',${i},true)">True</button>
+          <button onclick="pickTF(this,'${day.id}',${i},false)">False</button>
+        </span>
+      </div>`).join("")}
+    <p style="font-weight:700;margin:14px 0 4px">B) Short answers — write a full sentence</p>
+    ${day.story2.short.map((s,i)=>`
+      <div class="saq" data-i="${i}">
+        <label>${i+1}. ${s.q}</label>
+        <input type="text" placeholder="Write your answer here...">
+        <div class="model" data-role="model">✓ Model answer: ${s.model}</div>
+      </div>`).join("")}
+    <div style="margin-top:12px"><button class="btn" onclick="gradeReading(this,'${day.id}')">Check answers</button>
+    <span class="scorepill" data-role="rscore"></span></div>
+    <div class="feedback" data-role="rfb"></div>
+  </div>`;
+}
+
+function renderGrammar(g,i){
+  const pt=`<span class="pt ${g.point}">${POINT_LABEL[g.point]}</span>`;
+  if(g.type==="fill"){
+    const parts=g.text.split("___");
+    return `<div class="gitem" data-i="${i}" data-type="fill">
+      <div class="qline">${pt} ${parts[0]}<input class="blank" data-role="in"> ${parts[1]||""}
+      <span class="hint" style="display:inline">(${g.hint})</span></div>
+      <div class="reveal" data-role="rev"></div></div>`;
+  }
+  return `<div class="gitem" data-i="${i}" data-type="mc">
+    <div class="qline">${pt} ${g.text.replace("___","_____")}</div>
+    <div class="mc">${g.options.map(o=>`<label data-o="${o}"><input type="radio" name="g${i}_${Math.random().toString(36).slice(2,7)}" data-val="${o}"><span>${o}</span></label>`).join("")}</div>
+    <div class="reveal" data-role="rev"></div></div>`;
+}
+
+function renderSentence(words,i){
+  const bank=shuffle(words);
+  return `<div class="sb" data-i="${i}" data-answer="${words.join(' ')}">
+    <div class="answer" data-role="answer"></div>
+    <div class="bank" data-role="bank">${bank.map(w=>`<span class="tile">${w}</span>`).join("")}</div>
+    <button class="btn ghost" onclick="checkSentence(this)">Check</button>
+    <div class="feedback" data-role="sfb"></div></div>`;
+}
+
+function renderSpeak(t,i){
+  return `<div class="speaktask" data-i="${i}" data-focus="${t.focus}" data-targets="${t.targets.join('|')}">
+    <div class="prompt">${i+1}. ${t.prompt}</div>
+    <div class="targets">${t.targets.map(w=>`<span class="tw">${w}</span>`).join("")}</div>
+    <div class="recrow">
+      <span class="recdot" data-role="dot"></span>
+      <button class="btn" data-role="rec" onclick="toggleRec(this)">🎤 Record</button>
+      <audio data-role="audio" controls style="display:none"></audio>
+      <button class="btn accent" data-role="ai" onclick="getFeedback(this)">✨ Get AI feedback</button>
+    </div>
+    <div class="transcript" data-role="trans" contenteditable="true" spellcheck="false" data-ph="Your words will appear here…"></div>
+    <div class="hint trans-hint" data-role="thint"></div>
+    <div class="ai-out" data-role="aiout"></div></div>`;
+}
+
+/* ====================== GRAMMAR GRADING ====================== */
+function gradeGrammar(btn,dayId){
+  const card=btn.closest(".card"),day=DAYS.find(d=>d.id===dayId);
+  let correct=0;
+  card.querySelectorAll(".gitem").forEach(el=>{
+    const i=+el.dataset.i,g=day.grammar[i],rev=el.querySelector('[data-role="rev"]');
+    if(g.type==="fill"){
+      const inp=el.querySelector('[data-role="in"]'),val=norm(inp.value);
+      const ok=g.answers.some(a=>norm(a)===val);
+      inp.classList.toggle("correct",ok);inp.classList.toggle("wrong",!ok);
+      if(ok)correct++;else{rev.style.display="block";rev.textContent="✓ "+g.answers[0];}
+    }else{
+      const sel=el.querySelector("input:checked"),labels=el.querySelectorAll("label");
+      labels.forEach(l=>l.classList.remove("sel","correct","wrong"));
+      const chosen=sel?sel.dataset.val:null;
+      const ok=chosen===g.answer;
+      if(ok)correct++;
+      labels.forEach(l=>{if(l.dataset.o===g.answer)l.classList.add("correct");
+        if(l.dataset.o===chosen&&!ok)l.classList.add("wrong");});
+      if(!ok){rev.style.display="block";rev.textContent="✓ "+g.answer;}
+    }
+  });
+  const total=day.grammar.length;
+  card.querySelector('[data-role="gscore"]').textContent=`${correct} / ${total}`;
+  const fb=card.querySelector('[data-role="gfb"]');
+  fb.className="feedback "+(correct===total?"ok":"bad");
+  fb.textContent=correct===total?"Perfect! All correct. 🎉":`Good try! ${correct} correct. Check the green answers and try again.`;
+  markDone(dayId+":grammar");
+}
+
+/* ====================== VOCAB MATCHING ====================== */
+let vSel=null;
+document.addEventListener("click",e=>{
+  const it=e.target.closest(".vitem");if(!it)return;
+  if(it.classList.contains("matched"))return;
+  const grid=it.closest('[data-role="vmatch"]');
+  if(!vSel){
+    if(it.dataset.side!=="en")return; // start with English
+    vSel=it;it.classList.add("sel");return;
+  }
+  if(it===vSel){it.classList.remove("sel");vSel=null;return;}
+  if(it.dataset.side===vSel.dataset.side){ // switch selection on same side
+    if(it.dataset.side==="en"){vSel.classList.remove("sel");vSel=it;it.classList.add("sel");}
+    return;
+  }
+  // we have one en + one tr
+  const en=vSel.dataset.side==="en"?vSel:it;
+  const tr=vSel.dataset.side==="tr"?vSel:it;
+  if(en.dataset.i===tr.dataset.i){
+    en.classList.add("matched");tr.classList.add("matched");
+    en.classList.remove("sel");tr.classList.remove("sel");vSel=null;
+    const all=[...grid.querySelectorAll(".vitem")].every(x=>x.classList.contains("matched"));
+    if(all){
+      const card=grid.closest(".card"),fb=card.querySelector('[data-role="vfb"]');
+      fb.className="feedback ok";fb.textContent="All matched! Well done. 🎉";
+      markDone(card.dataset.day+":vocab");
+    }
+  }else{
+    en.classList.add("wrong");tr.classList.add("wrong");
+    setTimeout(()=>{en.classList.remove("wrong","sel");tr.classList.remove("wrong","sel");},500);
+    vSel=null;
+  }
+});
+
+/* ====================== SENTENCE BUILDING ====================== */
+document.addEventListener("click",e=>{
+  const tile=e.target.closest(".tile");if(!tile)return;
+  const sb=tile.closest(".sb");if(!sb)return;
+  const inBank=tile.parentElement.dataset.role==="bank";
+  sb.querySelector(`[data-role="${inBank?"answer":"bank"}"]`).appendChild(tile);
+});
+function checkSentence(btn){
+  const sb=btn.closest(".sb");
+  const got=[...sb.querySelector('[data-role="answer"]').querySelectorAll(".tile")].map(t=>t.textContent).join(" ");
+  const ok=norm(got)===norm(sb.dataset.answer);
+  const fb=sb.querySelector('[data-role="sfb"]');
+  fb.className="feedback "+(ok?"ok":"bad");
+  fb.textContent=ok?"Correct! ✓":"Not yet — check the word order and try again.";
+  if(ok){
+    const card=btn.closest(".card");
+    const all=[...card.querySelectorAll(".sb")].every(s=>{
+      const g=[...s.querySelector('[data-role="answer"]').querySelectorAll(".tile")].map(t=>t.textContent).join(" ");
+      return norm(g)===norm(s.dataset.answer);
+    });
+    const done=[...card.querySelectorAll(".sb")].filter(s=>{
+      const g=[...s.querySelector('[data-role="answer"]').querySelectorAll(".tile")].map(t=>t.textContent).join(" ");
+      return norm(g)===norm(s.dataset.answer);
+    }).length;
+    card.querySelector('[data-role="sscore"]').textContent=`${done} / ${card.querySelectorAll(".sb").length}`;
+    if(all)markDone(card.dataset.day+":sentences");
+  }
+}
+
+/* ====================== READING ====================== */
+function pickTF(btn,dayId,i,val){
+  const row=btn.closest(".tf");row.querySelectorAll("button").forEach(b=>b.classList.remove("sel"));
+  btn.classList.add("sel");row.dataset.pick=val;
+}
+function gradeReading(btn,dayId){
+  const card=btn.closest(".card"),day=DAYS.find(d=>d.id===dayId);
+  let correct=0;const totalTF=day.story2.tf.length;
+  card.querySelectorAll(".tf").forEach(row=>{
+    const i=+row.dataset.i,ans=day.story2.tf[i].a,pick=row.dataset.pick;
+    row.querySelectorAll("button").forEach(b=>b.classList.remove("correct","wrong"));
+    const tBtn=row.querySelectorAll("button")[0],fBtn=row.querySelectorAll("button")[1];
+    (ans?tBtn:fBtn).classList.add("correct");
+    if(pick!==undefined){
+      const picked=pick==="true";
+      if(picked===ans)correct++;else (picked?tBtn:fBtn).classList.add("wrong");
+    }
+  });
+  // short answers: keyword check + reveal models
+  let saOK=0;const sas=card.querySelectorAll(".saq");
+  sas.forEach(el=>{
+    const i=+el.dataset.i,s=day.story2.short[i];
+    const val=norm(el.querySelector("input").value);
+    const hit=val.length>3 && s.keywords.some(k=>val.includes(norm(k)));
+    if(hit)saOK++;
+    el.querySelector('[data-role="model"]').style.display="block";
+  });
+  card.querySelector('[data-role="rscore"]').textContent=`T/F ${correct}/${totalTF} · Short ${saOK}/${sas.length}`;
+  const fb=card.querySelector('[data-role="rfb"]');
+  const perfect=correct===totalTF;
+  fb.className="feedback "+(perfect?"ok":"bad");
+  fb.textContent=perfect?"Great reading! Compare your short answers with the model answers. 🎉"
+    :`You got ${correct}/${totalTF} True/False. Read again and compare with the model answers.`;
+  markDone(dayId+":reading");
+}
+
+/* ====================== VOICE: TTS + RECORDING ====================== */
+const hasSR='SpeechRecognition'in window||'webkitSpeechRecognition'in window;
+const SRClass=window.SpeechRecognition||window.webkitSpeechRecognition;
+const hasMR=(typeof window.MediaRecorder!=="undefined")&&!!(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia);
+let micStream=null,activeRec=null;
+document.querySelectorAll('[data-role="warn"]').forEach(w=>{
+  if(!hasMR){w.style.display="block";w.textContent="⚠️ Recording is not supported in this browser. Please open this page in Chrome, Edge, or Safari.";}
+});
+document.querySelectorAll('[data-role="thint"]').forEach(h=>{
+  h.innerHTML=hasSR
+    ? "Your words appear automatically as you speak — you can also tap the box to fix a word."
+    : "On your phone, tap the box and use the keyboard's 🎤 (dictation) button to write what you said — or just type it. Then press <strong>Get AI feedback</strong>.";
+});
+function pickMime(){
+  const t=["audio/webm;codecs=opus","audio/webm","audio/mp4","audio/aac"];
+  for(const m of t){try{if(window.MediaRecorder&&MediaRecorder.isTypeSupported(m))return m;}catch(e){}}
+  return "";
+}
+
+function speak(btn,dayId,i){
+  const txt=DAYS.find(d=>d.id===dayId).story1.lines[i];
+  try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(txt);u.lang="en-US";u.rate=.9;speechSynthesis.speak(u);}catch(e){}
+}
+
+async function getMic(){if(!micStream){micStream=await navigator.mediaDevices.getUserMedia({audio:true});}return micStream;}
+
+function makeRecognition(onText){
+  if(!SRClass)return null;
+  const r=new SRClass();r.continuous=true;r.interimResults=true;r.lang="en-US";
+  let fin="";
+  r.onresult=e=>{let interim="";for(let i=e.resultIndex;i<e.results.length;i++){
+    if(e.results[i].isFinal)fin+=e.results[i][0].transcript+" ";else interim+=e.results[i][0].transcript;}
+    onText(fin,interim);};
+  r.onerror=()=>{};
+  r._final=()=>fin;return r;
+}
+
+/* ---- Speaking task recorder ---- */
+async function toggleRec(btn){
+  const task=btn.closest(".speaktask");
+  if(activeRec&&activeRec.btn===btn){stopRec();return;}
+  if(activeRec)stopRec();
+  const trans=task.querySelector('[data-role="trans"]');
+  if(!hasMR){trans.innerHTML='<span style="color:#dc2626">Recording is not supported here. Use Chrome, Edge, or Safari — or type your answer in this box.</span>';return;}
+  let stream;try{stream=await getMic();}catch(e){
+    trans.innerHTML='<span style="color:#dc2626">Microphone blocked. Tap the lock / aA icon in your browser bar, allow the microphone, then reload. (You can also just type your answer here.)</span>';return;}
+  let mr;try{const m=pickMime();mr=m?new MediaRecorder(stream,{mimeType:m}):new MediaRecorder(stream);}catch(e){mr=new MediaRecorder(stream);}
+  const chunks=[];
+  if(hasSR)trans.textContent="";           // auto-transcribe; keep typed text on devices without SR
+  const rec=makeRecognition((fin,interim)=>{trans.innerHTML=`<span>${fin}</span><span class="interim">${interim}</span>`;});
+  if(rec)rec.onend=()=>{if(activeRec&&activeRec.rec===rec){try{rec.start();}catch(e){}}}; // Android: keep listening
+  mr.ondataavailable=e=>{if(e.data&&e.data.size)chunks.push(e.data);};
+  mr.onstop=()=>{const type=mr.mimeType||pickMime()||"audio/mp4";const blob=new Blob(chunks,{type});const url=URL.createObjectURL(blob);
+    const a=task.querySelector('[data-role="audio"]');a.src=url;a.style.display="inline-block";};
+  try{mr.start();}catch(e){}
+  if(rec)try{rec.start();}catch(e){}
+  activeRec={btn,task,mr,rec};
+  btn.textContent="⏹ Stop";task.querySelector('[data-role="dot"]').classList.add("active");
+}
+function stopRec(){
+  if(!activeRec)return;const{btn,task,mr,rec}=activeRec;
+  try{if(mr.state!=="inactive")mr.stop();}catch(e){}
+  try{if(rec)rec.stop();}catch(e){}
+  btn.textContent="🎤 Record again";task.querySelector('[data-role="dot"]').classList.remove("active");
+  const ai=task.querySelector('[data-role="ai"]');ai.disabled=false;
+  task.dataset.transcript=rec?rec._final():"";
+  activeRec=null;
+}
+
+/* ---- Shadowing recorder (record once, then score) ---- */
+async function shadow(btn,dayId,i){
+  const line=btn.closest(".shadowline"),target=DAYS.find(d=>d.id===dayId).story1.lines[i];
+  if(activeRec)stopRec();
+  let stream;try{stream=await getMic();}catch(e){line.querySelector('[data-role="sc"]').textContent="no mic";return;}
+  const sc=line.querySelector('[data-role="sc"]');
+  if(!SRClass){sc.textContent="use Chrome";return;}
+  btn.textContent="⏹ Stop";btn.classList.add("accent");
+  const rec=makeRecognition(()=>{});
+  const finish=()=>{
+    btn.textContent="🎤 Shadow";btn.classList.remove("accent");btn.onclick=()=>shadow(btn,dayId,i);
+    const said=rec._final();const score=scoreShadow(target,said);
+    sc.textContent=score+"%";sc.className="sc "+(score>=70?"good":score>=40?"mid":"");
+    activeRec=null;
+  };
+  rec.onend=finish;
+  try{rec.start();}catch(e){}
+  activeRec={btn,task:line,mr:{state:"inactive",stop(){}},rec};
+  btn.onclick=()=>{try{rec.stop();}catch(e){}};
+}
+function scoreShadow(target,said){
+  const tw=norm(target).split(" ").filter(Boolean),sw=new Set(norm(said).split(" ").filter(Boolean));
+  if(!tw.length)return 0;let hit=0;tw.forEach(w=>{if(sw.has(w))hit++;});
+  return Math.round(hit/tw.length*100);
+}
+
+/* ====================== AI FEEDBACK ====================== */
+function getFeedback(btn){
+  const task=btn.closest(".speaktask"),out=task.querySelector('[data-role="aiout"]');
+  const box=task.querySelector('[data-role="trans"]');
+  const transcript=((box?box.innerText:"")||"").trim()||task.dataset.transcript||"";
+  const targets=task.dataset.targets.split("|"),focus=task.dataset.focus;
+  const prompt=task.querySelector(".prompt").textContent;
+  out.classList.add("show");out.innerHTML="<em>Analyzing your answer…</em>";
+  const provider=localStorage.getItem("esl_ai_provider")||"heuristic";
+  const key=localStorage.getItem("esl_ai_key")||"";
+  if(provider!=="heuristic"&&key){
+    callLLM(provider,key,{prompt,targets,focus,transcript})
+      .then(text=>{out.innerHTML=`<div style="font-weight:700;margin-bottom:6px">🤖 AI feedback</div><div style="white-space:pre-wrap;font-size:14px;font-weight:500">${escapeHtml(text)}</div>`;})
+      .catch(()=>{out.innerHTML=renderHeuristic(analyzeSpeaking(transcript,{targets,focus}));});
+    return;
+  }
+  out.innerHTML=renderHeuristic(analyzeSpeaking(transcript,{targets,focus}));
+}
+function escapeHtml(s){return s.replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));}
+
+function analyzeSpeaking(transcript,task){
+  const t=norm(transcript),words=t.split(" ").filter(Boolean),wc=words.length;
+  const lines=[];
+  // target coverage
+  const hits=[],miss=[];
+  task.targets.forEach(w=>{const b=norm(w);if(t.includes(b)||t.includes(b.replace(/e?d$/,""))||t.includes(b.replace(/s$/,"")))hits.push(w);else miss.push(w);});
+  let score=1;
+  score+=Math.round(hits.length/task.targets.length*4); // up to 4
+  if(hits.length)lines.push({type:"ok",text:`You used ${hits.length}/${task.targets.length} target words: <strong>${hits.join(", ")}</strong>.`});
+  if(miss.length)lines.push({type:"warn",text:`Try to use these words too: <strong>${miss.join(", ")}</strong>.`});
+  // length / fluency
+  if(wc>=25){score+=3;lines.push({type:"ok",text:`Good length — you said about ${wc} words. Nice and fluent!`});}
+  else if(wc>=12){score+=2;lines.push({type:"warn",text:`You said about ${wc} words. Try to speak a little more — add one or two more sentences.`});}
+  else if(wc>0){score+=1;lines.push({type:"warn",text:`That was short (${wc} words). Try to speak for 30–60 seconds.`});}
+  else{lines.push({type:"warn",text:`No words were heard. Use Chrome/Edge, allow the microphone, and speak clearly.`});}
+  // grammar focus
+  const focusCheck={
+    present:{re:/\b\w+s\b/,ok:"Good present simple — remember he/she/it + verb+s (she eats).",warn:"For Present Simple, remember he/she/it + verb+s (she eats, he goes)."},
+    past:{re:/\b(\w+ed|went|ate|bought|woke|was|were|had|saw|made|took|swam|built|travell?ed|visited|stayed|read)\b/,ok:"Nice past simple verbs!",warn:"For Past Simple use past verbs (went, ate, bought, was, visited)."},
+    future:{re:/\bwill\b/,ok:"Good — you used 'will' for the future.",warn:"For the future, use will + verb (I will go, she will buy)."},
+    comp:{re:/\b(\w+er|more|better|worse)\b.*\bthan\b|\bthan\b/,ok:"Good comparison — you used a comparative with 'than'.",warn:"Compare with -er/more + than (taller than, more expensive than)."}
+  }[task.focus];
+  if(focusCheck){
+    if(focusCheck.re.test(t)){score+=2;lines.push({type:"ok",text:focusCheck.ok});}
+    else lines.push({type:"warn",text:focusCheck.warn});
+  }
+  score=Math.max(1,Math.min(10,score));
+  return{score,lines};
+}
+function renderHeuristic(r){
+  return `<div style="display:flex;align-items:baseline;gap:10px"><span class="score">${r.score}/10</span>
+    <span style="font-weight:700">AI feedback</span></div>
+    <ul>${r.lines.map(l=>`<li class="${l.type}"><span class="ic">${l.type==="ok"?"✔":"⚠"}</span><span>${l.text}</span></li>`).join("")}</ul>
+    <p class="hint" style="margin:8px 0 0">Tip: press 🎤 Record again to improve your score.</p>`;
+}
+
+async function callLLM(provider,key,d){
+  const sys=`You are a kind ESL teacher for a Turkish A2 student. Task: "${d.prompt}". They had to use these words: ${d.targets.join(", ")}. Grammar focus: ${d.focus}. The student said (speech-to-text, may have small errors): "${d.transcript}". Give short encouraging feedback in simple English (max 110 words): 1) what was good, 2) grammar mistakes with corrections, 3) which target words were used or missed, 4) one tip. End with "Score: X/10".`;
+  if(provider==="anthropic"){
+    const res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",
+      headers:{"content-type":"application/json","x-api-key":key,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
+      body:JSON.stringify({model:"claude-haiku-4-5-20251001",max_tokens:400,messages:[{role:"user",content:sys}]})});
+    const j=await res.json();return j.content[0].text;
+  }else{
+    const res=await fetch("https://api.openai.com/v1/chat/completions",{method:"POST",
+      headers:{"content-type":"application/json","authorization":"Bearer "+key},
+      body:JSON.stringify({model:"gpt-4o-mini",max_tokens:400,messages:[{role:"user",content:sys}]})});
+    const j=await res.json();return j.choices[0].message.content;
+  }
+}
+
+/* ====================== AI SETTINGS ====================== */
+(function(){
+  const p=localStorage.getItem("esl_ai_provider")||"heuristic";
+  $("#aiProvider").value=p;$("#aiKey").value=localStorage.getItem("esl_ai_key")||"";
+  $("#aiSave").onclick=()=>{
+    localStorage.setItem("esl_ai_provider",$("#aiProvider").value);
+    localStorage.setItem("esl_ai_key",$("#aiKey").value.trim());
+    const s=$("#aiSaved");s.style.display="inline";setTimeout(()=>s.style.display="none",1800);
+  };
+})();
+updateProgress();
+</script>
+</body>
+</html>
